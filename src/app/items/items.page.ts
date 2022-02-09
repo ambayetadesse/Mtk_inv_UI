@@ -426,9 +426,11 @@ export class ItemsPage implements OnInit {
     }
     );
   }
+  //get all items list for ...
   getAllItemLocation() {
     this.itemLocationService.getAllItemLocation().subscribe(async res => {
       this.listOfItemLocation = await res;
+    
     })
   }
   getItemList() {

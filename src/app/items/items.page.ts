@@ -400,6 +400,7 @@ export class ItemsPage implements OnInit {
   getCategory() {
     this.CategoryService.getAllLookUpCategory().subscribe(async result => {
       if (await result.length > 0) {
+        console.log(result)
         let store = await result.find(c => c.name == 'Store');
         if (store) {
           this.getStoreByName(store.id);

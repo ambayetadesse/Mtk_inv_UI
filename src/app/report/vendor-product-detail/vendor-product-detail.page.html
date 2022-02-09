@@ -1,0 +1,37 @@
+<div>
+  <dx-button id="exportButton" icon="exportpdf" text="Export to PDF" (onClick)="exportGrid($event)">
+  </dx-button>
+  <dx-data-grid id="gridContainer" [allowColumnReordering]="true" [dataSource]="VendorProductData"
+  [columnAutoWidth]="true"
+  [showBorders]="true" [rowAlternationEnabled]="true" [showRowLines]="true">
+    <dxo-paging [pageSize]="10"></dxo-paging>
+    <dxo-filter-panel [visible]="true"></dxo-filter-panel>
+    <dxo-header-filter [visible]="true"></dxo-header-filter>
+    <dxo-column-chooser #columnChooser [enabled]="true" [allowSearch]="allowSearch" mode="select">
+    </dxo-column-chooser>
+    <dxi-column dataField="ItemName"></dxi-column>
+    <dxi-column dataField="Cost"></dxi-column>
+    <dxi-column dataField="Quantity"></dxi-column>
+    <dxi-column dataField="picture" cellTemplate="cellTemplate" width="90px"></dxi-column>
+    <dxi-column dataField="VendorName" [groupIndex]="0"></dxi-column>
+    <div *dxTemplate="let cell of 'cellTemplate'">
+      <img src="{{cell.value}}">
+    </div>
+    <dxo-summary>
+      <dxi-group-item
+      column="Cost"
+      summaryType="sum"
+      [alignByColumn]="true"
+      [showInGroupFooter]="true"
+      displayFormat="Total: {0}"
+     >
+    </dxi-group-item>
+    <dxi-group-item
+      column="VendorName"
+      summaryType="count"
+      displayFormat="{0} orders"
+    >
+    </dxi-group-item>
+    </dxo-summary>
+  </dx-data-grid>
+</div>

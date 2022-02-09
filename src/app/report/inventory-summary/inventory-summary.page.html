@@ -1,0 +1,39 @@
+<div>
+  <dx-button id="exportButton" icon="exportpdf" text="Export to PDF" (onClick)="onExporting(InventorySummary)">
+  </dx-button>
+  <dx-data-grid id="gridContainer" [allowColumnReordering]="true" [dataSource]="InventorySummary"
+    [columnAutoWidth]="true" [showBorders]="true" [rowAlternationEnabled]="true" [showRowLines]="true"
+    [remoteOperations]="true">
+    <dxo-paging [pageSize]="10"></dxo-paging>
+    <dxo-filter-panel [visible]="true"></dxo-filter-panel>
+    <dxo-header-filter [visible]="true"></dxo-header-filter>
+    <dxo-column-chooser #columnChooser [enabled]="true" [allowSearch]="allowSearch" mode="select">
+    </dxo-column-chooser>
+    <dxi-column dataField="name"></dxi-column>
+    <dxi-column dataField="picture" cellTemplate="cellTemplate" height="80%" width="90px"></dxi-column>
+    <dxi-column dataField="catagory" [groupIndex]="0"></dxi-column>
+    <dxi-column dataField="quantity"></dxi-column>
+    <dxi-column dataField="Qty_Reserved"></dxi-column>
+    <dxi-column dataField="Qty_On_Order"></dxi-column>
+    <dxi-column dataField="Qty_Available"></dxi-column>
+    <dxi-column dataField="price"></dxi-column>
+    <dxi-column dataField="Total_Cost_Value"></dxi-column>
+    <dxo-summary>
+      <dxi-group-item name="Total" column="Total_Cost_Value" summaryType="sum" [alignByColumn]="true"
+        [showInGroupFooter]="true" displayFormat="Total: {0}">
+      </dxi-group-item>
+      <dxi-group-item column="catagory" summaryType="count" displayFormat="{0} products">
+      </dxi-group-item>
+      <dxi-total-item column="Total_Cost_Value" summaryType="sum" displayFormat="Grand Total:{0}">
+        <dxo-value-format format="currency" [precision]="3"></dxo-value-format>
+      </dxi-total-item>
+      <dxi-total-item column="quantity" summaryType="sum" displayFormat="Qty:{0}"></dxi-total-item>
+      <dxi-total-item column="Qty_Reserved" displayFormat="Reserved:{0}" summaryType="sum"></dxi-total-item>
+      <dxi-total-item column="Qty_On_Order" displayFormat="Order:{0}" summaryType="sum"></dxi-total-item>
+      <dxi-total-item column="Qty_Available" displayFormat="Available:{0}" summaryType="sum"></dxi-total-item>
+    </dxo-summary>
+    <div *dxTemplate="let cell of 'cellTemplate'">
+      <img src="{{cell.value}}">
+    </div>
+  </dx-data-grid>
+</div>

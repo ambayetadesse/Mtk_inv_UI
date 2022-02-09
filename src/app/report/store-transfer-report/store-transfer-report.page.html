@@ -1,0 +1,42 @@
+<div>
+  <dx-button id="exportButton"
+  icon="exportpdf"
+  text="Export to PDF"
+  (onClick)="onExporting(listOfStoreTransferReport)"
+  ></dx-button> 
+  <dx-data-grid
+  id="gridContainer"
+  [allowColumnReordering]="true"
+  [dataSource]="listOfStoreTransferReport"  [columnAutoWidth]="true"
+  [showBorders]="true" [rowAlternationEnabled]="true" [showRowLines]="true"
+  >
+  <dxo-paging [pageSize]="10"></dxo-paging>
+  <dxo-filter-panel [visible]="true"></dxo-filter-panel> 
+  <dxo-header-filter [visible]="true"></dxo-header-filter> 
+<dxo-column-chooser #columnChooser
+        [enabled]="true"
+        mode="select">
+    </dxo-column-chooser> 
+    <dxi-column dataField="Transfer_No"></dxi-column>
+    <dxi-column dataField="item"></dxi-column>
+    <dxi-column dataField="quantity"></dxi-column>
+    <dxi-column dataField="Catagory"></dxi-column>
+    <dxi-column dataField="Transfer_Date"></dxi-column>
+    <dxi-column dataField="From_Location"></dxi-column>
+    <dxi-column dataField="To_Location"></dxi-column>
+    <dxi-column dataField="Cost"></dxi-column> 
+    <dxo-summary>
+      <dxi-total-item column="Total_Cost_Value" summaryType="sum">
+        <dxo-value-format format="currency" [precision]="3"></dxo-value-format>
+      </dxi-total-item>
+      <dxi-total-item column="quantity" name="Qty" summaryType="sum"></dxi-total-item>
+      <dxi-total-item column="Qty_Reserved" name="Qty_Reserved" summaryType="sum"></dxi-total-item>
+      <dxi-total-item column="Qty_On_Order" name="Qty_On_Order" summaryType="sum"></dxi-total-item>
+      <dxi-total-item column="Qty_Available" name="Qty_Available" summaryType="sum"></dxi-total-item>
+    </dxo-summary>
+    <div *dxTemplate="let cell of 'cellTemplate'">
+      <img src="{{cell.value}}">
+    </div>
+</dx-data-grid>
+</div>
+

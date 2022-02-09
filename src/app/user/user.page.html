@@ -1,0 +1,33 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start"> </ion-buttons>
+    <ion-title>User </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+ 
+  <form [formGroup]="regform">
+      <h1 style="text-align: center">Sign up with Your Phone Number</h1>
+      <!-- <ion-item>
+        <ion-label position="floating" color="primary">Username</ion-label>
+        <ion-input type="text" formControlName="username" class="form-controll" required></ion-input>
+      </ion-item> -->
+      <ion-label style="text-align: center;margin-left: 12px;" for="phone">Phone Number</ion-label><br />
+        <div style="margin-left: 12px;">
+          <ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
+            [enableAutoCountrySelect]="true" [enablePlaceholder]="true" [searchCountryFlag]="true"
+            [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]" [selectFirstCountry]="false"
+            [selectedCountryISO]="CountryISO.Ethiopia" [maxLength]="15" [phoneValidation]="true"
+            [separateDialCode]="true" [numberFormat]="PhoneNumberFormat.National" name="phone"
+            formControlName="phone" [(ngModel)]="phoneNumber">
+          </ngx-intl-tel-input>
+          <div style="text-align: center;margin-top: 19px; margin-left: -214px;">
+            <ion-button id="sign-in-button" (click)="signIn(phoneNumber)">Sign In</ion-button>
+          </div>
+        </div>
+  </form>
+  <ion-content padding>
+    <div id="recaptcha-container"></div>
+    </ion-content>
+</ion-content>

@@ -1,0 +1,171 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary" style="height: 72px">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-row>
+      <ion-col size="12">
+        <div>
+          <ion-item color="primary" lines="none">
+            <h4 class="dispaly-4">Report</h4>
+          </ion-item>
+        </div>
+        <div>
+          <ion-label>{{reportName}}</ion-label>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
+</ion-header>
+<ion-content scrollX="true" #pageTop scrollEvents="true" (ionScroll)="scroll($event)">
+  <ion-item>
+    <ion-label>Select Report Type</ion-label>
+    <ion-select interface="popover" (ionChange)="ReportType($event)">
+      <ion-select-option *ngFor="let item of ListofreportType" [value]="item.id">{{item.name}}</ion-select-option>
+    </ion-select>
+    <ion-label>List</ion-label>
+    <ion-select interface="popover" (ionChange)="ReportDetails($event)">
+      <ion-select-option *ngFor="let item of listOfReportDetails" [value]="item.Id">{{item.Name}}</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <div *ngIf="customerDetail">
+    <app-customer-details></app-customer-details>
+  </div>
+  <div *ngIf="vendorDetails">
+    <app-vonder-details></app-vonder-details>
+  </div>
+  <div *ngIf="vendorProductDetails">
+    <app-vendor-product-detail></app-vendor-product-detail>
+  </div>
+  <div *ngIf="inventorySummary">
+    <app-inventory-summary></app-inventory-summary>
+  </div>
+  <div *ngIf="vendorPayments">
+    <app-vendor-payment></app-vendor-payment>
+  </div>
+  <div *ngIf="customerPayment">
+    <app-customer-payment></app-customer-payment>
+  </div>
+  <div *ngIf="graphcialReport">
+    <app-graphical-report></app-graphical-report>
+  </div>
+  <div *ngIf="storetransfer">
+    <app-store-transfer-report></app-store-transfer-report>
+  </div>
+  <!-- voucher report -->
+  <div *ngIf="vendor">
+    <dx-button id="exportButton" icon="exportpdf" text="Export to PDF" (onClick)="exportGrid($event)">
+    </dx-button>
+    <dx-data-grid [dataSource]="TansactionData" [showBorders]="true" [columnAutoWidth]="true"
+      [rowAlternationEnabled]="true">
+      <dxo-filter-panel [visible]="true"></dxo-filter-panel>
+      <dxo-header-filter [visible]="true"></dxo-header-filter>
+      <dxo-column-chooser #columnChooser [enabled]="true" [allowSearch]="allowSearch" mode="select">
+      </dxo-column-chooser>
+      <dxi-column dataField="vocherId"></dxi-column>
+      <dxi-column dataField="ItemName"></dxi-column>
+      <dxi-column dataField="ItemAmaricName"></dxi-column>
+      <dxi-column dataField="Quantity"></dxi-column>
+      <dxi-column dataField="Date"></dxi-column>
+      <dxi-column dataField="Cost" alignment="right" format="currency"
+        [editorOptions]="{ format: 'currency', showClearButton: true }">
+        <dxo-header-filter [dataSource]="saleAmountHeaderFilter"></dxo-header-filter>
+      </dxi-column>
+      <dxi-column dataField="subTotal"></dxi-column>
+      <dxi-column dataField="Vendor_name" [groupIndex]="0"></dxi-column>
+      <dxi-column dataField="taxAmount"></dxi-column>
+      <dxo-summary>
+        <dxi-group-item column="Quantity" summaryType="sum" [showInGroupFooter]="true" displayFormat="Quantity: {0}">
+        </dxi-group-item>
+        <dxi-group-item name="Total" column="subTotal" summaryType="sum" [alignByColumn]="true"
+          [showInGroupFooter]="true" displayFormat="Total: {0}">
+        </dxi-group-item>
+
+        <dxi-group-item name="Total Count" column="vocherId" summaryType="count" displayFormat="{0} orders">
+        </dxi-group-item>
+      </dxo-summary>
+      <dxo-summary>
+        <dxi-total-item column="subTotal" summaryType="sum" displayFormat="Grand total:{0}">
+          <dxo-value-format format="currency" [precision]="3"></dxo-value-format>
+        </dxi-total-item>
+        <dxi-total-item column="Quantity" summaryType="sum" displayFormat="Quantity:{0}"></dxi-total-item>
+      </dxo-summary>
+      <dxo-paging [pageSize]="10"></dxo-paging>
+      <dxo-search-panel [visible]="true"></dxo-search-panel>
+      <dxo-group-panel [visible]="true"></dxo-group-panel>
+      <dxo-grouping [autoExpandAll]="true"></dxo-grouping>
+    </dx-data-grid>
+  </div>
+  <div *ngIf="customer">
+    <dx-button id="exportButton" icon="exportpdf" text="Export to PDF" (onClick)="exportGrid($event)">
+    </dx-button>
+    <dx-data-grid [dataSource]="TansactionData" [allowColumnReordering]="true" [columnAutoWidth]="true"
+      [showBorders]="true" [rowAlternationEnabled]="true">
+      <dxo-filter-panel [visible]="true"></dxo-filter-panel>
+      <dxo-header-filter [visible]="true"></dxo-header-filter>
+      <dxo-column-chooser #columnChooser [enabled]="true" [allowSearch]="allowSearch" mode="select">
+      </dxo-column-chooser>
+      <dxi-column dataField="vocherId"></dxi-column>
+      <dxi-column dataField="ItemName"></dxi-column>
+      <dxi-column dataField="ItemAmaricName"></dxi-column>
+      <dxi-column dataField="Quantity"></dxi-column>
+      <dxi-column dataField="Date"></dxi-column>
+      <dxi-column dataField="Price"></dxi-column>
+      <dxi-column dataField="subTotal"></dxi-column>
+      <dxi-column dataField="Customer" [groupIndex]="0"></dxi-column>
+      <dxi-column dataField="taxAmount"></dxi-column>
+      <dxo-summary>
+        <dxi-group-item column="Quantity" summaryType="sum" [showInGroupFooter]="true" displayFormat="Quantity: {0}">
+        </dxi-group-item>
+        <dxi-group-item name="Total" column="subTotal" summaryType="sum" [alignByColumn]="true"
+          [showInGroupFooter]="true" displayFormat="Total: {0}">
+        </dxi-group-item>
+        <dxi-group-item name="Total Count" column="vocherId" summaryType="count" displayFormat="{0} orders">
+        </dxi-group-item>
+      </dxo-summary>
+      <dxo-summary>
+        <dxi-total-item column="subTotal" summaryType="sum" displayFormat="Grand total:{0}">
+          <dxo-value-format format="currency" [precision]="3"></dxo-value-format>
+        </dxi-total-item>
+        <dxi-total-item column="Quantity" summaryType="sum" displayFormat="Quantity:{0}"></dxi-total-item>
+      </dxo-summary>
+      <dxo-paging [pageSize]="10"></dxo-paging>
+      <dxo-search-panel [visible]="true"></dxo-search-panel>
+      <dxo-group-panel [visible]="true"></dxo-group-panel>
+      <dxo-grouping [autoExpandAll]="true"></dxo-grouping>
+    </dx-data-grid>
+  </div>
+  <div *ngIf="storeBalance">
+    <dx-button id="exportButton" icon="exportpdf" text="Export to PDF" (onClick)="exportGrid($event)">
+    </dx-button>
+    <dx-data-grid id="gridContainer" [dataSource]="listOfStores" [allowColumnReordering]="true" [columnAutoWidth]="true"
+      [showBorders]="true" [showRowLines]="true" [rowAlternationEnabled]="true">
+      <dxo-filter-panel [visible]="true"></dxo-filter-panel>
+      <dxo-header-filter [visible]="true"></dxo-header-filter>
+      <dxo-column-chooser #columnChooser [enabled]="true" [allowSearch]="allowSearch" mode="select">
+      </dxo-column-chooser>
+      <dxi-column dataField="name"></dxi-column>
+      <dxi-column dataField="picture" cellTemplate="cellTemplate" height="80%" width="90px"></dxi-column>
+      <dxi-column dataField="Quantity"></dxi-column>
+      <dxi-column dataField="Cost"></dxi-column>
+      <dxi-column dataField="Total_Cost_Value"></dxi-column>
+      <dxo-summary>
+        <dxi-total-item column="Total_Cost_Value" summaryType="sum">
+          <dxo-value-format format="currency" [precision]="3"></dxo-value-format>
+        </dxi-total-item>
+        <dxi-total-item column="Quantity" summaryType="count"></dxi-total-item>
+      </dxo-summary>
+      <dxo-paging [pageSize]="10"></dxo-paging>
+      <div *dxTemplate="let cell of 'cellTemplate'">
+        <img src="{{cell.value}}" />
+      </div>
+    </dx-data-grid>
+  </div>
+  <ion-fab horizontal="end" vertical="bottom" slot="fixed"
+    [ngClass]="{'location-visible': showScroll, 'location-hidden': !showScroll}">
+    <ion-fab-button color="light" (click)="pageScroller()">
+      <ion-icon md="chevron-up-outline" ios="chevron-up-circle-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
+<router-outlet></router-outlet>

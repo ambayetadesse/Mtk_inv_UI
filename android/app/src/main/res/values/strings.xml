@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">MTK-InvApp</string>
+    <string name="title_activity_main">MTK-InvApp</string>
+    <string name="package_name">io.ionic.InvApp</string>
+    <string name="custom_url_scheme">io.ionic.InvApp</string>
+</resources>

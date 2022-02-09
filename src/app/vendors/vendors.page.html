@@ -1,0 +1,102 @@
+<ion-header [translucent]="true">
+  <ion-toolbar  color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <div>
+      <ion-item color="primary" lines="none">
+        <ion-label>Vendors</ion-label>
+        <!-- <ion-badge color="success" slot="end">{{lengthOfVendor}}</ion-badge> -->
+        <ion-icon name="add-outline" (click)="openModal()"></ion-icon>
+      </ion-item>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content scrollX="true" #pageTop scrollEvents="true" (ionScroll)="scroll($event)"> 
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ion-segment (ionChange)="segmentChanged($event)" value="list">
+    <ion-segment-button value="list">
+      <ion-label>
+        List
+      </ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="details">
+      <ion-label>
+        details
+      </ion-label>
+    </ion-segment-button>
+  </ion-segment>
+  <ion-list class="animate__animated animate__slideInUp animate__fast" *ngIf="segment === 'list'">
+    <ion-list>
+      <div class="row">
+        <div class="col-md-8">
+          <div class="form-group">
+            <ion-searchbar showCancelButton="never" [(ngModel)]="searchText" placeholder="Search"></ion-searchbar>
+          </div>
+        </div>
+      </div>
+      <!-- <ng-container *ngIf="listOfvendors | async; else loading; let listOfvendors"> -->
+       <dx-data-grid #grid id="grid-container" [dataSource]="listOfvendors|filter:searchText" keyExpr="id"
+         [showBorders]="true" 
+         [showRowLines]="true"
+        [columnAutoWidth]="true"
+        [rowAlternationEnabled]="true"
+         (onRowRemoving)="deleteRow($event)"
+         (onRowUpdating)="updateRow($event)">
+         <dxo-paging [enabled]="true"></dxo-paging>
+         <dxo-column-chooser #columnChooser
+          [enabled]="true"
+          [allowSearch]="allowSearch"
+          mode="select">
+      </dxo-column-chooser> 
+         <dxo-editing 
+         mode="form"
+         [allowUpdating]="true"
+         [allowDeleting]="true">
+        </dxo-editing>
+        <dxo-paging [pageSize]="10"></dxo-paging>
+        <dxi-column dataField="vendorName" ></dxi-column>
+        <dxi-column dataField="contact" ></dxi-column>
+        <dxi-column dataField="phonenumber"></dxi-column>
+        <dxi-column dataField="balance" ></dxi-column>
+        <dxi-column dataField="address" ></dxi-column>
+        <dxi-column dataField="email" ></dxi-column>
+        <dxi-column dataField="website" ></dxi-column>
+        </dx-data-grid> 
+      <ng-template #loading>
+        <p>No results .....</p>
+      </ng-template>
+    </ion-list>
+  </ion-list>
+
+  <div class="animate__animated animate__slideInUp animate__fast" *ngIf="segment === 'details'">
+    <!-- <ion-card>
+      <ion-card-content>
+      </ion-card-content>
+    </ion-card> -->
+  </div>
+  <ion-footer>
+    <ion-toolbar translucent >
+      <ion-row align-items-center>
+        <ion-col>
+          <ion-button (click)="fliter()" ion-button full clear icon-left style="width: 150px;">
+            <ion-icon slot="start" name="options-outline"></ion-icon>Filter
+          </ion-button>
+        </ion-col>
+        <ion-col>
+          <ion-button (click)="sort()" ion-button full clear icon-left style="width: 150px;">Sort by
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-toolbar>
+  </ion-footer>
+  <ion-fab horizontal="end" vertical="bottom" slot="fixed"
+    [ngClass]="{'location-visible': showScroll, 'location-hidden': !showScroll}">
+    <ion-fab-button color="light" (click)="pageScroller()">
+      <ion-icon md="chevron-up-outline" ios="chevron-up-circle-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

@@ -1,0 +1,36 @@
+<div>
+  <dx-button id="exportButton"
+  icon="exportpdf"
+  text="Export to PDF"
+  (onClick)="exportGrid($event)">
+</dx-button>
+  <dx-data-grid
+  id="gridContainer"
+  [dataSource]="vendorPayment"
+  [allowColumnReordering]="true" [columnAutoWidth]="true"
+  [showBorders]="true" [showRowLines]="true" [rowAlternationEnabled]="true">
+  <dxo-filter-panel [visible]="true"></dxo-filter-panel> 
+  <dxo-header-filter [visible]="true"></dxo-header-filter> 
+<dxo-column-chooser #columnChooser
+        [enabled]="true"
+        [allowSearch]="allowSearch"
+        mode="select">
+    </dxo-column-chooser> 
+  <dxo-paging [pageSize]="10"></dxo-paging>
+  <dxi-column caption="vendorName"
+      [fixed]="true" dataField="vendorName" ></dxi-column>
+      <dxi-column dataField="Order_Number" ></dxi-column>
+      <dxi-column dataField="date" ></dxi-column>
+      <dxi-column dataField="Amount" ></dxi-column>
+       <dxo-summary>
+        <dxi-total-item column="Amount" summaryType="sum">
+          <dxo-value-format format="currency" [precision]="3"></dxo-value-format>
+        </dxi-total-item>
+        <dxi-total-item column="Order_Number" summaryType="count"></dxi-total-item>
+       </dxo-summary>
+</dx-data-grid>
+</div>
+
+ 
+
+

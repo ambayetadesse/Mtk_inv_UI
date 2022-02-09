@@ -1,0 +1,41 @@
+<form [formGroup]="regform" >
+        <ion-item>
+            <ion-label>Date</ion-label>
+            <ion-datetime displayFormat="MMM DD, YYYY HH:mm:ss" [(ngModel)]="minselectDate"   (ionChange)="SelectedValueMinDate($event)" formControlName="mindate" placeholder="select start date"></ion-datetime>&nbsp;&nbsp;&nbsp;<p>_</p>
+            <ion-datetime displayFormat="MMM DD, YYYY HH:mm:ss" [(ngModel)]="maxselectedDate"  (ionChange)="SelectedValueMinDate($event)" formControlName="maxdate" placeholder="select end date" ></ion-datetime>
+            <ion-label>Group By</ion-label>
+            <ion-select name="selectedOption" interface="popover" formControlName="selectedOption" (ionChange)="selectOption($event)">
+                <ion-select-option value="weekly">Weekly</ion-select-option>
+                <ion-select-option value="monthly">Monthly</ion-select-option>
+                <ion-select-option value="yeal">Year</ion-select-option>
+            </ion-select>
+        </ion-item>
+    </form>
+<dx-chart id="chart"
+ [dataSource]="graphicalReportList"
+ (onPointClick)="onPointClick($event)">
+    <dxo-title text="Graphical report">
+        <dxo-subtitle text="(in Barrels)"></dxo-subtitle>
+    </dxo-title>
+    <dxo-common-series-settings argumentField="name" valueField="totalAmount" type="bar">
+        <dxo-aggregation enabled="true" method="sum"></dxo-aggregation>
+        <dxo-label [visible]="true" [format]="{
+                type: 'fixedPoint',
+                precision: '0'
+            }">
+        </dxo-label>
+    </dxo-common-series-settings>
+    <dxo-legend verticalAlignment="bottom" horizontalAlignment="center"></dxo-legend>
+    <dxo-tooltip [enabled]="true"></dxo-tooltip>
+    <dxo-export [enabled]="true"></dxo-export>
+    <dxo-argument-axis aggregateByCategory="true"></dxo-argument-axis>
+    <dxi-value-axis name="totalAmount">
+        <dxo-title text="Total Amount ,in birr">
+            <dxo-font color="#03a9f4"></dxo-font>
+        </dxo-title>
+        <dxo-label>
+            <dxo-font color="#03a9f4"></dxo-font>
+        </dxo-label>
+    </dxi-value-axis>
+    <dxo-series-template nameField="name"></dxo-series-template>
+</dx-chart>

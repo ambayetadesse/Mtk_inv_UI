@@ -1,0 +1,20 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>sort</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="regform">
+    <ion-radio-group value="default" (ionChange)="radioGroupChange($event)">
+    <ion-item>
+      <ion-label>Ascending name</ion-label>
+      <ion-radio slot="start" value="Ascending" ></ion-radio>
+    </ion-item>
+    <ion-item>
+      <ion-label>Descending name</ion-label>
+      <ion-radio slot="start" value="Descending" ></ion-radio>
+    </ion-item>
+    </ion-radio-group>
+    </form>
+</ion-content>

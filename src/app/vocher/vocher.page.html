@@ -1,0 +1,332 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <div>
+      <ion-item color="primary" lines="none">
+        <ion-title>{{VoucherName}}</ion-title>
+        <ion-button color="white" id="add items" (click)="Send()">
+          <ion-icon name="save-outline"></ion-icon>&nbsp;Save
+        </ion-button>
+      </ion-item>
+    </div>
+  </ion-toolbar>
+</ion-header>
+<ion-content #pageTop scrollEvents="true" (ionScroll)="scroll($event)">
+  <form [formGroup]="regform">
+    <ion-item>
+      <ion-label>Date:</ion-label>
+      <ion-datetime displayFormat="MMM DD, YYYY HH:mm:ss" formControlName="date" [min]="minDate" [max]="maxDate"
+        [(ngModel)]="currentDate"></ion-datetime>
+      <small class="form-text text-muted" *ngIf="!regform.get('date').valid &&
+        (regform.get('date').dirty ||regform.get('date').touched) ">
+        This field is required!</small>
+      <label style="margin-left: 20px">Voucher No:{{this.VocherNo}}</label>
+    </ion-item>
+    <ion-item lines="full">
+      <ion-label *ngIf="FromStore">From Store </ion-label>
+      <div class="dx-field">
+        <dx-lookup style="border: none; font: 400 16px Arial" [items]="listofStore" *ngIf="FromStoreValue"
+          [(ngModel)]="defaultSelectedFromStored" valueExpr="id" [displayExpr]="getDisplayStore"
+          placeholder="Select Store" formControlName="fromStore" (onValueChanged)="SelectedFromStoreValue($event)"
+          itemTemplate="listofStore">
+          <dxo-drop-down-options title="Select Store"></dxo-drop-down-options>
+          <div *dxTemplate="let item of 'listofStore'">
+            <div class="custom-item">
+              <div>{{item.name }}</div>
+            </div>
+          </div>
+        </dx-lookup>
+      </div>
+      <ion-label *ngIf="ToStore">To Store </ion-label>
+      <div class="dx-field">
+        <dx-lookup style="border: none; font: 400 16px Arial" [items]="listofStore" *ngIf="ToStoreValue"
+          [(ngModel)]="defaultSelectedToStored" valueExpr="id" [displayExpr]="getDisplayStore"
+          placeholder="Select Store" formControlName="toStore" (onValueChanged)="SelectedToStoreValue($event)"
+          itemTemplate="listofStore">
+          <dxo-drop-down-options title="Select Store"></dxo-drop-down-options>
+          <div *dxTemplate="let item of 'listofStore'">
+            <div class="custom-item">
+              <div>{{item.name }}</div>
+            </div>
+          </div>
+        </dx-lookup>
+      </div>
+    </ion-item>
+    <ion-item *ngIf="vendors" lines="full">
+      <ion-label>Vendor</ion-label>
+      <div class="dx-field">
+        <dx-lookup style="border: none; font: 400 16px Arial" [items]="listOfVendor"
+          [searchExpr]="['id','vendorName','contact', 'phonenumber','address']" valueExpr="id"
+          [displayExpr]="getDisplayVendor" placeholder="Select Vendor" formControlName="vendor"
+          (onValueChanged)="SelectedVendorValue($event)" itemTemplate="listOfVendor">
+          <dxo-drop-down-options title="Select vendors"></dxo-drop-down-options>
+          <div *dxTemplate="let item of 'listOfVendor'">
+            <div class="custom-item">
+              <div>{{item.vendorName }} {{item.phonenumber }}</div>
+            </div>
+          </div>
+        </dx-lookup>
+      </div>
+    </ion-item>
+    <div class="form-group">
+      <div id="SelectedBalance" class="input-group mb-6" *ngIf="vendorsBalance">
+        <span class="input-group-text1">Balance </span>
+        <ion-input [(ngModel)]="vendorBalance" formControlName="vendorBalance" value="{{vendorBalance}}" required
+          readonly>
+        </ion-input>
+      </div>
+    </div>
+    <ion-item *ngIf="customers" lines="full">
+      <ion-label>Customer</ion-label>
+      <div class="dx-field">
+        <dx-lookup #customer style="border: none" [items]="listOfCustomer"
+          [searchExpr]="['id','fullname','contact', 'phonenumber','address']" valueExpr="id"
+          [displayExpr]="getDisplayCustomer" placeholder="Select customer" formControlName="customer"
+          (onValueChanged)="SelectedCustomerValue($event)" itemTemplate="listOfCustomer">
+          <dxo-drop-down-options title="Select Customers"></dxo-drop-down-options>
+          <div *dxTemplate="let item of 'listOfCustomer'">
+            <div class="custom-item">
+              <div>{{item.fullname }} {{item.phonenumber }}</div>
+            </div>
+          </div>
+          <dxo-drop-down-options [showTitle]="false">
+            <dxi-toolbar-item widget="dxButton" location="left" toolbar="bottom" [options]="{
+                      text: 'Add Customer',
+                            onClick: addCustomer,
+                            elementAttr: { id: 'cancelButton2' }
+                    }">
+            </dxi-toolbar-item>
+            <dxi-toolbar-item widget="dxButton" location="center" toolbar="bottom" [options]="{
+                    text: 'Cancel',
+                          onClick: CancelCustomer,
+                          elementAttr: { id: 'cancelButton2' }
+                  }">
+            </dxi-toolbar-item>
+          </dxo-drop-down-options>
+        </dx-lookup>
+      </div>
+    </ion-item>
+    <div class="form-group">
+      <div id="SelectedBalance" class="input-group mb-6" *ngIf="customerBalance">
+        <span class="input-group-text1">Balance </span>
+        <ion-input [(ngModel)]="updateBalance" formControlName="updateBalance" value="{{selectedCustomerBalance}}"
+          readonly>
+        </ion-input>
+      </div>
+    </div>
+    <ion-card-content class="item-seleted">
+      <div class="form-group">
+        <div class="dx-fieldset">
+          <div class="dx-fieldset-header">Items Select</div>
+          <div class="dx-field">
+            <dx-lookup #simpleLookup [items]="listofItems" [searchExpr]="['id','name','discrption', 'picture']"
+              valueExpr="id" [displayExpr]="getDisplayExpr" placeholder="Select Items" formControlName="item"
+              (onValueChanged)="valueChanged($event)" itemTemplate="listofItems" [(ngModel)]="itemid">
+              <dxo-drop-down-options title="Select Item"></dxo-drop-down-options>
+              <div *dxTemplate="let item of 'listofItems'">
+                <div class="custom-item">
+                  <img src="{{item.picture}}" />
+                  <div style="
+                      white-space: nowrap;
+                      overflow: hidden;
+                      text-overflow: ellipsis;
+                    ">
+                    {{item.AmaricName }} {{item.name }}
+                  </div>
+                </div>
+              </div>
+              <dxo-drop-down-options [showTitle]="false">
+                <dxi-toolbar-item widget="dxButton" location="left" toolbar="bottom" [options]="{
+                          text: 'Add Item',
+                                onClick: addItem,
+                                elementAttr: { id: 'cancelButton1' }
+                        }">
+                </dxi-toolbar-item>
+                <dxi-toolbar-item widget="dxButton" location="center" toolbar="bottom" [options]="{
+                        text: 'Cancel',
+                              onClick: Cancel,
+                              elementAttr: { id: 'cancelButton1' }
+                      }">
+                </dxi-toolbar-item>
+              </dxo-drop-down-options>
+            </dx-lookup>
+            <small class="form-text text-muted" *ngIf="!regform.get('item').valid &&
+                  (regform.get('item').dirty ||regform.get('item').touched) ">
+              This field is required!</small>
+          </div>
+          <div *ngIf="SelectedDiv">
+            <div class="selected" *ngFor="let code of linename">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <ion-label>
+                      <img class="imageItems" [src]="code?.picture" />
+                    </ion-label>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <ion-label>
+                      <h1>Description</h1>
+                      <div>{{code?.AmaricName}}</div>
+                    </ion-label>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <ion-label>
+                      <h1>Item Name:</h1>
+                      <div>{{code?.name}}</div>
+                    </ion-label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <ion-item style="--background: #e9ecef" lines="none">
+            <span class="input-group-text">Quantity</span>
+            <ion-input style="text-align: center" class="input-field" type="number" [(ngModel)]="Quantity"
+              value="{{Quantity}}" formControlName="Quantity" placeholder="Quantity"
+              [class.is-invalid]="!isValid && Quantity==0">
+            </ion-input>
+          </ion-item>
+          <ion-icon data-toggle="tooltip" data-placement="bottom" title="Qty details" class="icon-class" slot="end"
+            name="alert-circle-outline" (click)="itemClick($event)"></ion-icon>
+          <ion-item lines="none" *ngIf="priceInput" style="--background: #e9ecef">
+            <span class="input-group-text">Price</span>
+            <ion-input style="text-align: center" class="input-field" type="number" value="{{Price}}"
+              formControlName="Price" [class.is-invalid]="!isValid && Price==0" placeholder="Price"></ion-input>
+          </ion-item>
+          <ion-item *ngIf="costInput" style="--background: #e9ecef" lines="none">
+            <span class="input-group-text">Cost</span>
+            <ion-input style="text-align: center" class="input-field" type="number" value="{{cost}}"
+              formControlName="cost" [class.is-invalid]="!isValid && cost==0" readonly placeholder="cost"></ion-input>
+          </ion-item>
+          <ion-fab-button id="add items" (click)="Save()">
+            <ion-icon name="add"></ion-icon>
+          </ion-fab-button>
+        </div>
+      </div>
+    </ion-card-content>
+  </form>
+  <ion-list>
+    <table class="table table-hover">
+      <colgroup>
+        <col width="5%" />
+        <col width="*" />
+        <col width="10%" />
+        <col width="10%" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Item Name</th>
+          <th scope="col">Quantity</th>
+          <th scope="col" *ngIf="priceInput">Price</th>
+          <th scope="col" *ngIf="costInput">Cost</th>
+          <th scope="col">Total</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of ListOfItems|filter:searchText  | paginate : {
+                                              itemsPerPage: tableSize,
+                                              currentPage: page,
+                                              totalItems: count
+                                            };
+                                      let i = index" [class.active]="i == currentIndex">
+          <th scope="row">{{i + 1}}</th>
+          <td>{{item.ItemName}}</td>
+          <td>{{item.Quantity}}</td>
+          <td *ngIf="priceInput">{{item.Price}}</td>
+          <td *ngIf="costInput">{{item.cost}}</td>
+          <td>{{item.Total}}</td>
+          <form [formGroup]="regformId">
+            <td>
+              <ion-input formControlName="lineItemId" value={{item.id}}></ion-input>
+            </td>
+            <td>
+              <ion-input formControlName="itemBalanceId" value={{item.itemBalanceId}}></ion-input>
+            </td>
+            <td>
+              <ion-input formControlName="voucherTransactionId" value={{item.voucherTransactionId}}></ion-input>
+            </td>
+          </form>
+          <td (click)="UpdateRow(item)">
+            <ion-icon color="primary" name="create" slot="icon-only"></ion-icon>
+          </td>
+          <td (click)="removeRow(i)">
+            <ion-icon color="primary" name="trash" slot="icon-only"></ion-icon>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="d-flex justify-content-center">
+      <pagination-controls responsive="true" previousLabel="Prev" nextLabel="Next"
+        (pageChange)="onTableDataChange($event)">
+      </pagination-controls>
+    </div>
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <div>
+            <ion-label>Order #</ion-label>
+            <dx-data-grid #grid id="gridContainer" [dataSource]="listOfVoucher" [allowColumnReordering]="true"
+              [columnAutoWidth]="true" [hoverStateEnabled]="true" [showBorders]="true" [selectedRowKeys]="[]"
+              [(selectedRowKeys)]="selectedRows" [rowAlternationEnabled]="true"
+              [remoteOperations]="{ groupPaging: true }" [wordWrapEnabled]="true"
+              (onSelectionChanged)="selectionChangedRow($event)">
+              <dxo-selection mode="single"></dxo-selection>
+              <dxo-group-panel [visible]="true"></dxo-group-panel>
+              <dxo-grouping #expand [autoExpandAll]="true"></dxo-grouping>
+              <dxi-column dataField="Order"></dxi-column>
+              <dxi-column dataField="Order_Date"></dxi-column>
+              <dxi-column *ngIf="this.VendorColumn" dataField="Vendor"></dxi-column>
+              <dxi-column *ngIf="this.CustomerColumn" dataField="Customer"></dxi-column>
+            </dx-data-grid>
+          </div>
+        </ion-col>
+        <ion-col>
+          <div>
+            <form [formGroup]="paidForm">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <div class="input-group mb-6">
+                    <span class="input-group-text">Grand Total</span>
+                    <ion-input class="input-field" type="number" formControlName="totalAmount"
+                      value="{{grandTotalCustomer|| this.grandTotalVendor}}" readonly>
+                    </ion-input>
+                  </div>
+                  <div class="input-group mb-6">
+                    <ion-button id="add items" (click)="Payment()">
+                      Paid
+                    </ion-button>
+                    <input class="input-field" formControlName="paid" [(ngModel)]="paid" (keyup)="onKey()" type="number"
+                      class="form-control" placeholder="Br 0" />
+                  </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                  <label>Balance &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Br {{values}}</label>
+                  <ion-input type="hidden" formControlName="values" [(ngModel)]="values" value="{{values}}"></ion-input>
+                </div>
+              </div>
+            </form>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <dx-action-sheet [items]="commands" title="Choose action" [usePopover]="true" [(visible)]="actionSheetVisible"
+      [target]="actionSheetTarget"></dx-action-sheet>
+  </ion-list>
+  <ion-fab horizontal="end" vertical="bottom" slot="fixed"
+    [ngClass]="{'location-visible': showScroll, 'location-hidden': !showScroll}">
+    <ion-fab-button color="light" (click)="pageScroller()">
+      <ion-icon md="chevron-up-outline" ios="chevron-up-circle-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

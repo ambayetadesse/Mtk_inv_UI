@@ -1,0 +1,7 @@
+{
+  "name": "MTK-InvApp",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

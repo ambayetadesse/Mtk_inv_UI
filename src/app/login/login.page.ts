@@ -37,12 +37,12 @@ export class LoginPage implements OnInit {
 		}
 		if (this.regform.valid) {
 			console.log(data)
-			this.authServices.create(data).subscribe(result => {
+			this.authServices.getAllUser().subscribe(result => {
 				//localStorage.setItem("token", result);
 				console.log(result);
-				//let res = result.find(c => c.username == userName && c.password == password);
-				if (result) {
-					localStorage.setItem("userId", "res.id");
+				let res = result.find(c => c.username == userName && c.password == password);
+				if (res) {
+					localStorage.setItem("userId", res.id);
 					//localStorage.setItem("Authorization", "")
 					this.router.navigate(['/menu']);
 					//this.navCtrl.navigateRoot('AppComponent');
